@@ -535,9 +535,14 @@ def main():
         text_encoder = T5EncoderModel.from_pretrained("cvssp/audioldm-m-full", subfolder="text_encoder")
     
     elif ("journey" in args.pretrained_model_name_or_path):
-        logger.warning("Using T5 text encoder and tokenizer")
-        tokenizer = AutoTokenizer.from_pretrained("t5-large", model_max_length=args.text_encoder_max_length)
-        text_encoder = T5EncoderModel.from_pretrained("t5-large")
+        if "flan" in args.output_dir:
+            logger.warning("Using flan-T5 text encoder and tokenizer")
+            tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-large", model_max_length=args.text_encoder_max_length)
+            text_encoder = T5EncoderModel.from_pretrained("google/flan-t5-large")
+        else:
+            logger.warning("Using T5 text encoder and tokenizer")
+            tokenizer = AutoTokenizer.from_pretrained("t5-large", model_max_length=args.text_encoder_max_length)
+            text_encoder = T5EncoderModel.from_pretrained("t5-large")
     else:
         tokenizer = CLIPTokenizer.from_pretrained(
             args.pretrained_model_name_or_path, subfolder="tokenizer", revision=args.revision
